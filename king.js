@@ -93,7 +93,7 @@ function mostrarMetodo(numero) {
   document.getElementById('metodoResultado').innerHTML = resultado;
 }
 
-// 🔥 SISTEMA DE CADASTRO CORRIGIDO
+//  SISTEMA DE CADASTRO CORRIGIDO
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('cadastro').addEventListener('submit', async (e) => {
     e.preventDefault();
