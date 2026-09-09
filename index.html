@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>King Chat - Seu Assistente Pessoal</title>
+    <link rel="stylesheet" href="king.css" />
+    <link rel="stylesheet" href="animar.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <h1 class="chat-name"><i class="fas fa-robot"></i> <span id="chatName">King</span></h1>
+        <p class="subtitle">O seu programa para te ajudar a crescer, aprender melhor e dominar sua vida acadêmica.</p>
+      </header>
+
+      <main class="main-content">
+        <div class="menu-section" id="mainMenu">
+          <h2>Menu Principal</h2>
+          <div class="button-grid">
+            <button onclick="showCapacidades()" class="btn primary">
+              <i class="fas fa-brain"></i> Ver minhas capacidades
+            </button>
+            <button onclick="alterarNome()" class="btn secondary">
+              <i class="fas fa-edit"></i> Alterar nome do chat
+            </button>
+          </div>
+        </div>
+
+        <div class="menu-section hidden" id="capacidadesMenu">
+          <h2>Minhas Capacidades</h2>
+          <div class="button-grid">
+            <button onclick="showHorarios()" class="btn">
+              <i class="fas fa-clock"></i> Criar horários de estudos
+            </button>
+            <button onclick="showMetodos()" class="btn">
+              <i class="fas fa-rocket"></i> Métodos pra aprender rápido
+            </button>
+            <button onclick="showFinancas()" class="btn">
+              <i class="fas fa-wallet"></i> Educação financeira
+            </button>
+            <button onclick="showAutoconfianca()" class="btn">
+              <i class="fas fa-heart"></i> Autoconfiança e autoestima
+            </button>
+          </div>
+          <button onclick="voltarMenu()" class="btn back-btn">
+            <i class="fas fa-arrow-left"></i> Voltar
+          </button>
+        </div>
+
+        <div class="menu-section hidden" id="horariosMenu">
+          <h2>Qual período você está livre para estudar?</h2>
+          <div class="input-group">
+            <input type="text" id="periodoInput" placeholder="Digite: manhã, tarde ou noite" />
+            <button onclick="gerarHorario()" class="btn primary">
+              <i class="fas fa-search"></i> Gerar horário
+            </button>
+          </div>
+          <div id="horarioResultado" class="result-box"></div>
+          <button onclick="voltarCapacidades()" class="btn back-btn">
+            <i class="fas fa-arrow-left"></i> Voltar
+          </button>
+        </div>
+
+        <div class="menu-section hidden" id="metodosMenu">
+          <h2>Métodos para aprender em um flash</h2>
+          <div class="button-grid">
+            <button onclick="mostrarMetodo(1)" class="btn">Pomodoro</button>
+            <button onclick="mostrarMetodo(2)" class="btn">Feynman</button>
+            <button onclick="mostrarMetodo(3)" class="btn">Active Recall</button>
+            <button onclick="mostrarMetodo(4)" class="btn">Spaced Repetition</button>
+            <button onclick="mostrarMetodo(5)" class="btn">Interleaving</button>
+          </div>
+          <div id="metodoResultado" class="result-box"></div>
+          <button onclick="voltarCapacidades()" class="btn back-btn">
+            <i class="fas fa-arrow-left"></i> Voltar
+          </button>
+        </div>
+
+        <div class="menu-section hidden" id="financasMenu">
+          <h2>Educação Financeira</h2>
+          <div id="financasConteudo" class="result-box"></div>
+          <button onclick="voltarCapacidades()" class="btn back-btn">
+            <i class="fas fa-arrow-left"></i> Voltar
+          </button>
+        </div>
+
+        <div class="menu-section hidden" id="autoconfiancaMenu">
+          <h2>Autoconfiança e Autodisciplina</h2>
+          <div id="autoconfiancaConteudo" class="result-box"></div>
+          <button onclick="voltarCapacidades()" class="btn back-btn">
+            <i class="fas fa-arrow-left"></i> Voltar
+          </button>
+        </div>
+      </main>
+
+    <footer class="rodape">
+      <h2>Este programa foi criado por:</h2>
+      <p>Dev. José Frederico — Backend e HTML</p>
+      <p>Estudante do SMARTBITS</p>
+      <p>Contactos: 954295355 / 976156646 (só para auxiliar em projetos).</p>
+    </footer>
+
+    <script src="king.js"></script>
+  </body>
+</html>
