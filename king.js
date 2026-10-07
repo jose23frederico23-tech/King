@@ -72,8 +72,8 @@ function gerarHorario() {
   const resultado = document.getElementById('horarioResultado');
 
   const mapa = {
-    manha: 'Estudar das 9h às 11h: 9:00-9:10 organização, 9:10-9:40 estudo principal, 9:40-9:45 pausa, 9:45-10:25 prática, 10:25-10:30 pausa, 10:30-10:55 revisão.',
-    tarde: 'Estudar das 16h às 18h: 16:00-16:10 preparação, 16:10-16:50 estudo, 16:50-17:00 pausa, 17:00-17:40 prática, 17:40-17:55 revisão, 17:55-18:00 fechamento.',
+    manha: 'Estudar das 9h às 11h : <br> 1º - 9:00-9:10 Organização dos materias. <br> 2º - 9:10-9:40 estudar os temas  principais ou o que tens mais dificuldade. <br>3º - 9:40-9:45 pausa de 5 minutos. <br> 9:45-10:25 práticar os temas estudados. <br> 4º - 10:25-10:30 pausa novamente para o descanso. <br> 5º - 10:30-10:55 revisão para finalizar.',
+    tarde: 'Estudar das 16h às 18h : <br> 1º -16:00-16:10 Preparação do conteudo. <br> 2º - 16:10-16:50 estudar os temas com maior dificuldade. <br> 3º - 16:50-17:00 pausa os estudos por 5 minutos. <br> 4º - 17:00-17:40 práticar o que estudaste. <br> 5º - 17:40-17:55 revisão final dos conteudos.<br> 17:55-18:00 fechamento dos estudos.'
     noite: 'Estudar das 20h às 22h: 20:00-20:20 revisão, 20:20-20:50 foco, 20:50-21:20 exercícios, 21:20-21:50 resumos, 21:50-22:00 planejamento.'
   };
 
