@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>King Chat - Seu Assistente Pessoal</title>
     <link rel="stylesheet" href="king.css" />
-    <link rel="stylesheet" href="animar.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
   </head>
   <body>
@@ -93,14 +92,29 @@
             <i class="fas fa-arrow-left"></i> Voltar
           </button>
         </div>
+
+        <section class="ai-panel" aria-label="Assistente de estudos da IA">
+          <h2>IA de estudos</h2>
+          <label for="perguntaIA">Pergunte ao King IA sobre o que você está estudando</label>
+          <textarea id="perguntaIA" rows="4" maxlength="4000" placeholder="Ex.: Como posso estudar matemática em 30 minutos sem me perder?"></textarea>
+          <div class="ai-actions">
+            <button onclick="responderIA()" class="btn primary">
+              <i class="fas fa-paper-plane"></i> Pedir ajuda ao King IA
+            </button>
+          </div>
+          <div id="respostaIA" class="result-box ia-response" aria-live="polite">
+            <strong>King IA:</strong> Digite uma dúvida e eu te ajudarei a organizar seus estudos.
+          </div>
+        </section>
       </main>
 
-    <footer class="rodape">
-      <h2>Este programa foi criado por:</h2>
-      <p>Dev. José Frederico — Backend e HTML</p>
-      <p>Estudante do SMARTBITS</p>
-      <p>Contactos: 954295355 / 976156646 (só para auxiliar em projetos).</p>
-    </footer>
+      <footer class="rodape">
+        <h2>Este programa foi criado por:</h2>
+        <p>Dev. José Frederico — Backend e HTML</p>
+        <p>Estudante do SMARTBITS</p>
+        <p>Contactos: 954295355 / 976156646 (só para auxiliar em projetos).</p>
+      </footer>
+    </div>
 
     <script src="king.js"></script>
   </body>
