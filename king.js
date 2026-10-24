@@ -1,4 +1,8 @@
 let chatName = 'King';
+let historicoIA = [];
+const API_CHAT_URL = ['localhost', '127.0.0.1'].includes(window.location.hostname)
+  ? '/api/chat'
+  : 'https://king-gemini-api.onrender.com/api/chat';
 
 function showSection(sectionId) {
   const sections = ['mainMenu', 'capacidadesMenu', 'horariosMenu', 'metodosMenu', 'financasMenu', 'autoconfiancaMenu'];
@@ -103,27 +107,45 @@ async function responderIA() {
     return;
   }
 
-  const botao = document.querySelector('.ai-actions button');
+  const botao = document.getElementById('btn-IA');
   if (botao) {
     botao.disabled = true;
   }
   resposta.textContent = 'King IA está a preparar uma resposta...';
 
   try {
-    const requisicao = await fetch('/api/chat', {
+    const mensagens = [
+      ...historicoIA,
+      { role: 'user', text: pergunta }
+    ];
+    const requisicao = await fetch(API_CHAT_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ pergunta })
+      body: JSON.stringify({ messages: mensagens })
     });
-    const dados = await requisicao.json();
-
+    let dados;
+    try {
+      dados = await requisicao.json();
+    } catch {
+      throw new Error('O servidor não devolveu uma resposta válida. Inicie a aplicação com npm start.');
+    }
     if (!requisicao.ok) {
-      throw new Error();
+      throw new Error(dados.error || 'Não foi possível obter uma resposta.');
+    }
+    if (typeof dados.answer !== 'string' || !dados.answer.trim()) {
+      throw new Error('O servidor devolveu uma resposta vazia.');
     }
 
     resposta.textContent = `King IA: ${dados.answer}`;
-  } catch {
-    resposta.textContent = 'King IA: Erro no servidor. Tente novamente mais tarde.';
+    historicoIA = [
+      ...mensagens,
+      { role: 'model', text: dados.answer }
+    ].slice(-20);
+  } catch (erro) {
+    const mensagem = erro instanceof TypeError
+      ? 'Não foi possível contactar a API King. Confirme que o serviço Render está publicado e tente novamente.'
+      : erro.message || 'Ocorreu um erro ao enviar a pergunta.';
+    resposta.textContent = `King IA: ${mensagem}`;
   } finally {
     if (botao) {
       botao.disabled = false;

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-br" or lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -95,11 +95,12 @@
 
         <section class="ai-panel" aria-label="Assistente de estudos da IA">
           <h2>IA de estudos</h2>
+          <p>A chave do Gemini fica protegida no servidor. Não é necessária configuração no navegador.</p>
           <label for="perguntaIA">Pergunte ao King IA sobre o que você está estudando</label>
           <textarea id="perguntaIA" rows="4" maxlength="4000" placeholder="Ex.: Como posso estudar matemática em 30 minutos sem me perder?"></textarea>
           <div class="ai-actions">
-            <button onclick="responderIA()" class="btn primary">
-              <i class="fas fa-paper-plane"></i> Pedir ajuda ao King IA
+            <button onclick="responderIA()" class="btn primary " id="btn-IA">
+              <i class="fas fa-paper-plane"></i> Pedir ajuda ao King
             </button>
           </div>
           <div id="respostaIA" class="result-box ia-response" aria-live="polite">
@@ -110,12 +111,12 @@
 
       <footer class="rodape">
         <h2>Este programa foi criado por:</h2>
-        <p>Dev. José Frederico — Backend e HTML</p>
+        <p>Dev. José Frederico — Backend e Frontend</p>
         <p>Estudante do SMARTBITS</p>
-        <p>Contactos: 954295355 / 976156646 (só para auxiliar em projetos).</p>
+        <p>Contactos: 957 375 801 / 976 156 646 (só para auxiliar em projetos).</p>
       </footer>
     </div>
 
     <script src="king.js"></script>
   </body>
-</html>
+  </html>

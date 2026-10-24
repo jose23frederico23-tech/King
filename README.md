@@ -1,10 +1,16 @@
 # King
 
-## Executar o assistente
+## Publicar o frontend no GitHub Pages e a API no Render
 
-1. Instale o Node.js 18 ou superior.
-2. Crie uma nova chave da API Gemini no Google AI Studio. Não reutilize uma chave partilhada em mensagens.
-3. Coloque a chave em `GEMINI_API_KEY` no arquivo `.env` na raiz do projeto.
-4. Execute `npm start` e abra http://127.0.0.1:3000.
+1. Envia este repositório para o GitHub e ativa **Settings > Pages > Deploy from a branch**, selecionando `main` e a pasta `/ (root)`.
+2. No Render, cria um **Blueprint** a partir deste repositório e confirma o serviço descrito em `render.yaml`.
+3. No serviço Render, define `GEMINI_API_KEY` com uma chave nova do Google AI Studio. Não a coloques no GitHub.
+4. Espera o deploy do Render ficar disponível e abre o endereço GitHub Pages do projeto.
 
-A chave fica apenas no servidor Node e não é enviada ao navegador. O arquivo `.env` está excluído do Git; use `.env.example` como referência.
+`king.js` envia o chat para `https://king-gemini-api.onrender.com/api/chat`. O backend Node escuta na porta do Render, permite CORS apenas para o domínio GitHub Pages definido e chama o Gemini usando o segredo guardado no Render. O endpoint `/health` é usado pelo Render para verificar o serviço.
+
+Para executar localmente, cria `.env` a partir de `.env.example`, configura uma chave de desenvolvimento e executa `npm start`. `SERVE_STATIC=true` serve os ficheiros locais, e o frontend usa `/api/chat` no servidor local.
+
+Revoga a chave Gemini que foi partilhada anteriormente e cria uma nova. O `.env` está excluído do Git; nunca coloques uma chave em `king.js`, `index.html` ou num commit.
+
+O serviço gratuito do Render pode suspender-se quando não é usado e demorar alguns segundos a responder ao primeiro pedido. CORS permite ao site chamar a API a partir do domínio configurado, mas não impede clientes não-browser de chamar o endpoint; acompanha o uso e a quota da chave Gemini.

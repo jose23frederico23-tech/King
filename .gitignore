@@ -1,3 +1,7 @@
+gemini.py
 .env
 node_modules/
+.venv*/
+__pycache__/
+*.py[cod]
 chatking.c
