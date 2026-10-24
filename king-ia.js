@@ -10,7 +10,7 @@ const MAX_HISTORY_MESSAGES = 21;
 const MAX_HISTORY_CHARACTERS = 48_000;
 const MAX_QUESTION_LENGTH = 4_000;
 const DEFAULT_ALLOWED_ORIGINS = [
-  'https://jose23frederico23-tech.github.io',
+  'https://king-silk-six.vercel.app',
   'http://127.0.0.1:3000',
   'http://localhost:3000'
 ];

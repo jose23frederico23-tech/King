@@ -12,4 +12,4 @@ services:
       - key: GEMINI_MODEL
         value: gemini-3.8-flash
       - key: ALLOWED_ORIGINS
-        value: https://jose23frederico23-tech.github.io
+        value: https://king-silk-six.vercel.app
