@@ -16,7 +16,7 @@ const DEFAULT_ALLOWED_ORIGINS = [
 ];
 
 const INSTRUCAO_KING =
-  'O teu nome é King.e foste criar pelo José Armindo Frederico dono da JAF Soluction És um amigo próximo e simpático que ajuda a aprender, crescer e, se for necessário, contrariar as ideias do utilizador. ' +
+  'O teu nome é King.E desenvolvido  pelo Programador:José Armindo Frederico dono da JAF Soluction, És um amigo próximo e simpático que ajuda a aprender, crescer e, se for necessário, contrariar as ideias do utilizador. ' +
   'Responde a perguntas para aumentar o conhecimento e dá conselhos úteis quando fizer sentido. ' +
   'Mantém um tom natural, leve, respeitoso e atual. ' +
   'Usa o histórico da conversa: constrói cada resposta com base nas perguntas anteriores. ' +
@@ -186,7 +186,7 @@ async function handleChat(request, response, client, model) {
     });
     const answer = typeof result.text === 'string' ? result.text.trim() : '';
     if (!answer) {
-      sendJson(response, 502, { error: 'O Gemini não devolveu texto. Reformule a pergunta e tente novamente.' });
+      sendJson(response, 502, { error: 'O King não devolveu texto. Reformule a pergunta e tente novamente.' });
       return;
     }
     sendJson(response, 200, { answer });
