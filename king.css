@@ -265,6 +265,51 @@ h2 {
     margin-top: 20px;
 }
 
+.ia-loading {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 5px;
+}
+
+.ia-loading-dots {
+    display: inline-flex;
+    gap: 3px;
+}
+
+.ia-loading-dots span {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background-color: var(--accent-secondary);
+    animation: ia-loading-pulse 1s ease-in-out infinite;
+}
+
+.ia-loading-dots span:nth-child(2) {
+    animation-delay: 0.15s;
+}
+
+.ia-loading-dots span:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+@keyframes ia-loading-pulse {
+    0%, 60%, 100% {
+        opacity: 0.3;
+        transform: translateY(0);
+    }
+
+    30% {
+        opacity: 1;
+        transform: translateY(-4px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ia-loading-dots span {
+        animation: none;
+    }
+}
+
 /* Result Box */
 .result-box {
     background-color: var(--bg-tertiary);

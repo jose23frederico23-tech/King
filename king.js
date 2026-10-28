@@ -92,6 +92,25 @@ function gerarHorario() {
   }
 }
 
+function mostrarIndicadorEspera(resposta) {
+  const indicador = document.createElement('span');
+  indicador.className = 'ia-loading';
+  indicador.setAttribute('role', 'status');
+
+  const texto = document.createElement('span');
+  texto.textContent = 'King IA está a preparar uma resposta';
+
+  const pontos = document.createElement('span');
+  pontos.className = 'ia-loading-dots';
+  pontos.setAttribute('aria-hidden', 'true');
+  for (let i = 0; i < 3; i += 1) {
+    pontos.append(document.createElement('span'));
+  }
+
+  indicador.append(texto, pontos);
+  resposta.replaceChildren(indicador);
+}
+
 async function responderIA() {
   const campoPergunta = document.getElementById('perguntaIA');
   const resposta = document.getElementById('respostaIA');
@@ -111,7 +130,7 @@ async function responderIA() {
   if (botao) {
     botao.disabled = true;
   }
-  resposta.textContent = 'King IA está a preparar uma resposta...';
+  mostrarIndicadorEspera(resposta);
 
   try {
     const mensagens = [
