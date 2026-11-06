@@ -1,10 +1,10 @@
-// Servidor Node.js do King e integração privada com a API Gemini.
+// Servidor Node.js do King e integração privada com a API Groq.
 const fs = require('node:fs');
 const http = require('node:http');
 const path = require('node:path');
-const { GoogleGenAI } = require('@google/genai');
 
-const ROOT = __dirname;
+const ROOT = path.resolve(__dirname, '..');
+const GROQ_CHAT_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const MAX_REQUEST_BYTES = 64 * 1024;
 const MAX_HISTORY_MESSAGES = 21;
 const MAX_HISTORY_CHARACTERS = 48_000;
@@ -123,36 +123,40 @@ function validateMessages(messages) {
 
   let totalCharacters = 0;
   const contents = [];
-  for (const [index, message] of messages.entries()) {
-    const expectedRole = index % 2 === 0 ? 'user' : 'model';
+  for (const message of messages) {
+    const role = message?.role === 'model' ? 'assistant' : message?.role;
+    const content = typeof message?.content === 'string' ? message.content : message?.text;
     if (
       !message ||
       typeof message !== 'object' ||
-      message.role !== expectedRole ||
-      typeof message.text !== 'string' ||
-      !message.text.trim()
+      !['user', 'assistant'].includes(role) ||
+      typeof content !== 'string' ||
+      !content.trim()
     ) {
       return { error: 'O histórico da conversa é inválido.' };
     }
-    if (message.role === 'user' && message.text.length > MAX_QUESTION_LENGTH) {
+    if (role === 'user' && content.length > MAX_QUESTION_LENGTH) {
       return { error: `A pergunta deve ter até ${MAX_QUESTION_LENGTH} caracteres.` };
     }
 
-    totalCharacters += message.text.length;
+    totalCharacters += content.length;
     if (totalCharacters > MAX_HISTORY_CHARACTERS) {
       return { error: 'O histórico da conversa é demasiado longo.' };
     }
-    contents.push({ role: message.role, parts: [{ text: message.text }] });
+    contents.push({ role, content });
   }
 
-  if (messages[messages.length - 1].role !== 'user') {
+  if (contents[0].role === 'assistant') {
+    contents.shift();
+  }
+  if (!contents.length || contents[contents.length - 1].role !== 'user') {
     return { error: 'A última mensagem deve ser uma pergunta.' };
   }
 
-  return { contents };
+  return { messages: contents };
 }
 
-async function handleChat(request, response, client, model) {
+async function handleChat(request, response, apiKey, model) {
   if (request.method !== 'POST') {
     response.setHeader('Allow', 'POST');
     sendJson(response, 405, { error: 'Método não permitido.' });
@@ -179,23 +183,41 @@ async function handleChat(request, response, client, model) {
   }
 
   try {
-    const result = await client.models.generateContent({
-      model,
-      contents: validation.contents,
-      config: { systemInstruction: INSTRUCAO_KING }
+    const result = await fetch(GROQ_CHAT_URL, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model,
+        messages: [
+          { role: 'system', content: INSTRUCAO_KING },
+          ...validation.messages
+        ]
+      })
     });
-    const answer = typeof result.text === 'string' ? result.text.trim() : '';
+
+    if (!result.ok) {
+      const error = new Error(`Groq devolveu HTTP ${result.status}.`);
+      error.status = result.status;
+      throw error;
+    }
+
+    const data = await result.json();
+    const content = data?.choices?.[0]?.message?.content;
+    const answer = typeof content === 'string' ? content.trim() : '';
     if (!answer) {
       sendJson(response, 502, { error: 'O King não devolveu texto. Reformule a pergunta e tente novamente.' });
       return;
     }
     sendJson(response, 200, { answer });
   } catch (error) {
-    console.error('Falha ao contactar o Gemini:', error?.message || error);
+    console.error('Falha ao contactar a API Groq:', error?.message || error);
     sendJson(response, 502, {
       error: error?.status === 429 || error?.statusCode === 429
-        ? 'O limite de pedidos do Gemini foi atingido. Tente novamente mais tarde.'
-        : 'O Gemini não conseguiu responder. Verifique a chave e tente novamente.'
+        ? 'O limite de pedidos da Groq foi atingido. Tente novamente mais tarde.'
+        : 'A Groq não conseguiu responder. Verifique a chave e tente novamente.'
     });
   }
 }
@@ -219,8 +241,8 @@ function serveStatic(request, response) {
   const files = {
     '/': ['index.html', 'text/html; charset=utf-8'],
     '/index.html': ['index.html', 'text/html; charset=utf-8'],
-    '/king.js': ['king.js', 'text/javascript; charset=utf-8'],
-    '/king.css': ['king.css', 'text/css; charset=utf-8']
+    '/SQL/king.js': ['SQL/king.js', 'text/javascript; charset=utf-8'],
+    '/disgner/king.css': ['disgner/king.css', 'text/css; charset=utf-8']
   };
   const file = files[pathname];
   if (!file) {
@@ -249,16 +271,15 @@ function serveStatic(request, response) {
 function iniciarServidor() {
   loadEnvFile();
 
-  const apiKey = (process.env.GEMINI_API_KEY || '').trim();
+  const apiKey = (process.env.GROQ_API_KEY || '').trim();
   if (!apiKey) {
-    throw new Error('Erro: defina GEMINI_API_KEY no arquivo .env.');
+    throw new Error('Erro: defina GROQ_API_KEY no arquivo .env.');
   }
-  const model = (process.env.GEMINI_MODEL || 'gemini-3.8-flash').trim();
+  const model = (process.env.GROQ_MODEL || 'openai/gpt-oss-20b').trim();
   if (!model) {
-    throw new Error('Erro: GEMINI_MODEL não pode ficar vazio.');
+    throw new Error('Erro: GROQ_MODEL não pode ficar vazio.');
   }
 
-  const client = new GoogleGenAI({ apiKey });
   const port = Number(process.env.PORT) || 3000;
   const allowedOrigins = getAllowedOrigins();
   const server = http.createServer((request, response) => {
@@ -288,7 +309,7 @@ function iniciarServidor() {
         sendJson(response, 405, { error: 'Método não permitido.' });
         return;
       }
-      handleChat(request, response, client, model).catch((error) => {
+      handleChat(request, response, apiKey, model).catch((error) => {
         console.error('Erro inesperado na rota de chat:', error?.message || error);
         if (!response.headersSent) {
           sendJson(response, 500, { error: 'Ocorreu um erro interno no servidor.' });

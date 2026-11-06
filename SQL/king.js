@@ -135,7 +135,7 @@ async function responderIA() {
   try {
     const mensagens = [
       ...historicoIA,
-      { role: 'user', text: pergunta }
+      { role: 'user', content: pergunta }
     ];
     const requisicao = await fetch(API_CHAT_URL, {
       method: 'POST',
@@ -158,11 +158,11 @@ async function responderIA() {
     resposta.textContent = `King IA: ${dados.answer}`;
     historicoIA = [
       ...mensagens,
-      { role: 'model', text: dados.answer }
+      { role: 'assistant', content: dados.answer }
     ].slice(-20);
   } catch (erro) {
     const mensagem = erro instanceof TypeError
-      ? 'Não foi possível contactar a API King. Confirme que o serviço Render está publicado e tente novamente.'
+      ? 'Não foi possível contactar a API King. Confirme que o servidor está em execução e tente novamente.'
       : erro.message || 'Ocorreu um erro ao enviar a pergunta.';
     resposta.textContent = `King IA: ${mensagem}`;
   } finally {
@@ -187,51 +187,6 @@ function mostrarMetodo(numero) {
   }
 }
 
-function configurarCadastro() {
-  const form = document.getElementById('cadastroForm');
-  if (!form) return;
-
-  form.addEventListener('submit', async (event) => {
-    event.preventDefault();
-
-    const dados = {
-      nome: document.getElementById('nome').value.trim(),
-      email: document.getElementById('email').value.trim(),
-      telefone: document.getElementById('telefone').value.trim(),
-      interesse: document.getElementById('interesse').value
-    };
-
-    const mensagemDiv = document.getElementById('cadastroMensagem');
-    if (!mensagemDiv) return;
-
-    mensagemDiv.innerHTML = 'Enviando...';
-    mensagemDiv.className = 'mensagem';
-
-    try {
-      const resposta = await fetch('/formcadastro', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(dados)
-      });
-
-      const data = await resposta.json();
-
-      if (resposta.ok) {
-        mensagemDiv.innerHTML = 'Cadastro realizado com sucesso!';
-        mensagemDiv.className = 'mensagem sucesso';
-        form.reset();
-      } else {
-        mensagemDiv.innerHTML = data.error || 'Erro ao cadastrar.';
-        mensagemDiv.className = 'mensagem erro';
-      }
-    } catch (erro) {
-      mensagemDiv.innerHTML = 'Erro ao conectar com o servidor.';
-      mensagemDiv.className = 'mensagem erro';
-      console.error('Erro no cadastro:', erro);
-    }
-  });
-}
-
 document.addEventListener('DOMContentLoaded', () => {
   if (document.getElementById('chatName')) {
     document.getElementById('chatName').textContent = chatName;
@@ -246,5 +201,4 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  configurarCadastro();
 });

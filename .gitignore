@@ -6,10 +6,9 @@ __pycache__/
 *.py[cod]
 chatking.c
 requirements.txt
-render.yaml
-king-ia.js
-king.js
 package-lock.json
 .gitignore
 README.md
-package.json
+SQL/*
+!SQL/king-ia.js
+!SQL/king.js
