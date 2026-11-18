@@ -199,7 +199,8 @@ async function handleChat(request, response, apiKey, model) {
     });
 
     if (!result.ok) {
-      const error = new Error(`Groq devolveu HTTP ${result.status}.`);
+      console.error('A Groq respondeu com erro HTTP:', result.status);
+      const error = new Error('A Groq não conseguiu responder.');
       error.status = result.status;
       throw error;
     }
@@ -241,7 +242,8 @@ function serveStatic(request, response) {
   const files = {
     '/': ['index.html', 'text/html; charset=utf-8'],
     '/index.html': ['index.html', 'text/html; charset=utf-8'],
-    '/SQL/king.js': ['SQL/king.js', 'text/javascript; charset=utf-8'],
+    '/backend/king.js': ['backend/king.js', 'text/javascript; charset=utf-8'],
+    '/SQL/king.js': ['backend/king.js', 'text/javascript; charset=utf-8'],
     '/disgner/king.css': ['disgner/king.css', 'text/css; charset=utf-8']
   };
   const file = files[pathname];

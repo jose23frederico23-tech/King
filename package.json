@@ -1,10 +1,11 @@
+
 {
   "name": "king-study-assistant",
   "version": "1.0.0",
   "private": true,
   "description": "Assistente de estudos King com integração segura à Groq",
   "scripts": {
-    "start": "node SQL/king-ia.js"
+    "start": "node backend/king-ia.js"
   },
   "engines": {
     "node": ">=20"

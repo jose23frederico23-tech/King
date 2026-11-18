@@ -1,14 +1,22 @@
-gemini.py
-.env
+
+# Dependências Node.js
 node_modules/
+
+# Variáveis secretas
+.env
+.env.*
+!.env.example
+
+# Configuração local da Vercel
+.vercel/
+
+# Ambientes Python antigos ou arquivados
 .venv*/
 __pycache__/
 *.py[cod]
-chatking.c
-requirements.txt
-package-lock.json
-.gitignore
-README.md
-SQL/*
-!SQL/king-ia.js
-!SQL/king.js
+
+# Ficheiros temporários
+.DS_Store
+Thumbs.db
+.vercel
+.env*

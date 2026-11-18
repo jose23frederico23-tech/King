@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#10172b">
+  <title>Gerador de Disciplinas</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="Gerador de Disciplinas, início">
+      <span class="brand-mark" aria-hidden="true">K</span>
+      <span>king<span class="brand-light">.learn</span></span>
+    </a>
+    <span class="local-badge"><span aria-hidden="true"></span> Guardado neste navegador</span>
+  </header>
+
+  <main class="layout">
+    <section class="intro">
+      <div>
+        <p class="eyebrow">O teu espaço de aprendizagem</p>
+        <h1>Gerador de <span>Disciplinas</span></h1>
+        <p class="intro-copy">Organiza os teus estudos, reúne materiais e acompanha os pontos de cada pessoa.</p>
+      </div>
+      <button class="button button-primary" id="new-discipline" type="button">
+        <span aria-hidden="true">＋</span> Nova disciplina
+      </button>
+    </section>
+
+    <section class="stats" aria-label="Resumo">
+      <article class="stat-card">
+        <span class="stat-icon icon-violet" aria-hidden="true">▤</span>
+        <div><p>Disciplinas</p><strong id="discipline-count">0</strong></div>
+      </article>
+      <article class="stat-card">
+        <span class="stat-icon icon-mint" aria-hidden="true">↗</span>
+        <div><p>Pontos atribuídos</p><strong id="points-count">0</strong></div>
+      </article>
+      <article class="stat-card">
+        <span class="stat-icon icon-amber" aria-hidden="true">♙</span>
+        <div><p>Pessoas no ranking</p><strong id="people-count">0</strong></div>
+      </article>
+    </section>
+
+    <section class="workspace">
+      <div class="main-column">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">O teu plano</p>
+            <h2>As minhas disciplinas</h2>
+          </div>
+          <label class="search-box">
+            <span class="sr-only">Pesquisar disciplinas</span>
+            <span aria-hidden="true">⌕</span>
+            <input id="search" type="search" placeholder="Pesquisar..." autocomplete="off">
+          </label>
+        </div>
+
+        <div id="discipline-list" class="discipline-list"></div>
+        <div id="empty-state" class="empty-state">
+          <span class="empty-icon" aria-hidden="true">✦</span>
+          <h3>A tua próxima conquista começa aqui</h3>
+          <p>Cria uma disciplina para organizar materiais e somar pontos.</p>
+          <button class="button button-secondary" id="empty-new-discipline" type="button">Criar disciplina</button>
+        </div>
+      </div>
+
+      <aside class="side-column">
+        <section class="panel ranking-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Em destaque</p>
+              <h2>Ranking de pontos</h2>
+            </div>
+            <span class="trophy" aria-hidden="true">♛</span>
+          </div>
+          <p class="panel-copy">Atribui pontos por disciplina e vê quem está no topo.</p>
+          <ol id="ranking-list" class="ranking-list"></ol>
+          <p id="ranking-empty" class="muted-empty">Os pontos atribuídos vão aparecer aqui.</p>
+        </section>
+
+        <section class="panel ai-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Estuda com apoio</p>
+              <h2>IA do King</h2>
+            </div>
+            <span class="ai-icon" aria-hidden="true">✳</span>
+          </div>
+          <label class="field-label" for="ai-url">Endereço da IA do King</label>
+          <div class="url-row">
+            <input id="ai-url" type="url" placeholder="https://..." autocomplete="url">
+            <button class="button button-small button-secondary" id="save-ai-url" type="button">Guardar</button>
+          </div>
+          <p class="field-help">Configura o link uma vez. Depois podes enviar perguntas a partir de cada disciplina.</p>
+        </section>
+      </aside>
+    </section>
+
+    <section class="editor panel" id="editor" hidden>
+      <div class="panel-heading">
+        <div>
+          <p class="eyebrow" id="editor-eyebrow">Nova matéria</p>
+          <h2 id="editor-title">Criar disciplina</h2>
+        </div>
+        <button class="icon-button" id="close-editor" type="button" aria-label="Fechar formulário">×</button>
+      </div>
+      <form id="discipline-form">
+        <input id="discipline-id" type="hidden">
+        <div class="form-grid">
+          <label class="field full-width">
+            <span>Nome da disciplina <span class="required">*</span></span>
+            <input id="discipline-name" type="text" maxlength="80" placeholder="Ex.: Matemática" required>
+          </label>
+          <label class="field">
+            <span>Pontos por participação</span>
+            <input id="discipline-points" type="number" min="0" max="100000" step="1" value="10" required>
+            <small>Estes pontos serão somados quando os atribuíres a uma pessoa.</small>
+          </label>
+          <label class="field">
+            <span>Adicionar um link</span>
+            <span class="link-entry">
+              <input id="resource-url" type="url" placeholder="https://..." autocomplete="url">
+              <button class="button button-small button-secondary" id="add-link" type="button">Adicionar</button>
+            </span>
+          </label>
+          <label class="field full-width">
+            <span>Descrição</span>
+            <textarea id="discipline-description" rows="3" maxlength="500" placeholder="O que vais estudar nesta disciplina?"></textarea>
+          </label>
+          <label class="field full-width">
+            <span>Pergunta ou instruções para a IA do King</span>
+            <textarea id="ai-prompt" rows="3" maxlength="2000" placeholder="Ex.: Explica os conceitos principais desta disciplina..."></textarea>
+          </label>
+          <div class="field full-width">
+            <span class="field-label">Links adicionados</span>
+            <ul id="pending-links" class="resource-list"></ul>
+          </div>
+          <div class="field full-width">
+            <label class="upload-box" for="file-input">
+              <span class="upload-icon" aria-hidden="true">↑</span>
+              <span><strong>Adicionar documentos ou PDFs</strong><small>Escolhe ficheiros no teu dispositivo. Guardados apenas neste navegador.</small></span>
+              <input id="file-input" type="file" multiple>
+            </label>
+            <ul id="pending-files" class="resource-list"></ul>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="button button-secondary" id="cancel-editor" type="button">Cancelar</button>
+          <button class="button button-primary" id="submit-discipline" type="submit">Guardar disciplina</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

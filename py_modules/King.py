@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from google import genai
 from flask import Flask, jsonify, request
 
+
 while True:
     print("\n\n")
     print("Bem-vindo ao King! O seu assistente de aprendizagem e crescimento.")

@@ -1,17 +1,29 @@
 # King
 
-## Publicar o frontend no Vercel e a API no Render
+Assistente de estudos com frontend estático e integração privada com a Groq.
 
-1. Confirma que `SQL/king-ia.js` e `SQL/king.js` aparecem no Git; os restantes ficheiros de `SQL/` continuam ignorados.
-2. No Render, cria um **Blueprint** a partir deste repositório e seleciona o `render.yaml` na raiz.
-3. No serviço Render, define `GROQ_API_KEY` com a tua chave da Groq. Não a coloques no GitHub.
-4. O serviço usa o modelo `openai/gpt-oss-20b` por padrão de deploy. O frontend aponta para `https://king-gemini-api.onrender.com/api/chat`, e o CORS permite `https://king-silk-six.vercel.app`.
-5. Faz deploy do serviço no Render e confirma que `/health` responde `{"status":"ok"}`. Depois publica o frontend no Vercel.
+## Arquitetura principal
 
-O `package.json` da raiz inicia o backend Node em `SQL/king-ia.js`; o Render fornece a porta através de `PORT`. A chave Groq é configurada como variável secreta no Render, nunca no código.
+- `index.html`, `disgner/king.css` e `backend/king.js`: frontend.
+- `api/chat.js`: função serverless `POST /api/chat` da Vercel.
+- `backend/king-ia.js`: servidor Node legado para execução autónoma/Render; não é necessário no deploy Vercel.
+- `py_modules/` e outros recursos legados são independentes da aplicação principal.
 
-Para executar localmente, configura `GROQ_API_KEY` e `GROQ_MODEL` no `.env` e executa `npm start`. O frontend local usa `/api/chat`.
+A chave da Groq é lida apenas no servidor através de `GROQ_API_KEY`. Nunca a coloques no frontend, no Git ou em registos.
 
-O `.env` está excluído do Git; nunca coloques a chave da Groq em `king.js`, `index.html` ou num commit.
+## Executar localmente na Vercel
 
-O serviço gratuito do Render pode suspender-se quando não é usado e demorar alguns segundos a responder ao primeiro pedido. CORS permite ao site chamar a API a partir do domínio configurado, mas não impede clientes não-browser de chamar o endpoint; acompanha o uso e a quota da chave Groq.
+1. Instala Node.js 20 ou superior e executa `npm install`.
+2. Adiciona `GROQ_API_KEY` e, opcionalmente, `GROQ_MODEL` ao `.env.local`. Este ficheiro é ignorado pelo Git; mantém as outras variáveis locais que já existam.
+3. Executa `vercel dev` diretamente no terminal. Não existe script `dev` que invoque a Vercel recursivamente.
+4. Abre o endereço local indicado pela CLI. A API fica disponível em `/api/chat`.
+
+No projeto Vercel, configura `GROQ_API_KEY` nos ambientes Production, Preview e Development. O modelo predefinido é `openai/gpt-oss-20b`.
+
+## Publicar na Vercel
+
+Liga o repositório ao projeto Vercel ou usa a CLI autenticada e ligada ao projeto. A pasta `api/` é detetada automaticamente como funções serverless; não é necessário um `vercel.json` para este layout. Depois de rever as alterações, publica pela integração GitHub/Vercel ou executa `vercel --prod`.
+
+## Servidor legado opcional
+
+`npm start` inicia `backend/king-ia.js` para compatibilidade com o serviço Render definido em `render.yaml`. Esse servidor requer `GROQ_API_KEY`; não é o backend usado pela Vercel. Define a variável de ambiente no serviço Render, nunca no código.

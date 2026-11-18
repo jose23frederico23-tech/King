@@ -1,8 +1,6 @@
 let chatName = 'King';
 let historicoIA = [];
-const API_CHAT_URL = ['localhost', '127.0.0.1'].includes(window.location.hostname)
-  ? '/api/chat'
-  : 'https://king-gemini-api.onrender.com/api/chat';
+const API_CHAT_URL ='/api/chat';
 
 function showSection(sectionId) {
   const sections = ['mainMenu', 'capacidadesMenu', 'horariosMenu', 'metodosMenu', 'financasMenu', 'autoconfiancaMenu'];
