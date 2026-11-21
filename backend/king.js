@@ -1,5 +1,6 @@
 let chatName = 'King';
 let historicoIA = [];
+let versaoConversa = 0;
 const API_CHAT_URL ='/api/chat';
 
 function showSection(sectionId) {
@@ -10,6 +11,8 @@ function showSection(sectionId) {
       element.classList.toggle('hidden', id !== sectionId);
     }
   });
+  document.getElementById('chatView')?.classList.add('hidden');
+  document.getElementById('toolWorkspace')?.classList.remove('hidden');
 }
 
 function showCapacidades() {
@@ -96,7 +99,7 @@ function mostrarIndicadorEspera(resposta) {
   indicador.setAttribute('role', 'status');
 
   const texto = document.createElement('span');
-  texto.textContent = 'King IA está a preparar uma resposta';
+  texto.textContent = 'O King está a pensar';
 
   const pontos = document.createElement('span');
   pontos.className = 'ia-loading-dots';
@@ -109,26 +112,135 @@ function mostrarIndicadorEspera(resposta) {
   resposta.replaceChildren(indicador);
 }
 
+function criarMensagem(tipo) {
+  const mensagem = document.createElement('article');
+  mensagem.className = `message message-${tipo}`;
+
+  const avatar = document.createElement('span');
+  avatar.className = 'message-avatar';
+  avatar.setAttribute('aria-hidden', 'true');
+  avatar.textContent = tipo === 'assistant' ? 'K' : 'Tu';
+
+  const corpo = document.createElement('div');
+  corpo.className = 'message-body';
+  const identificacao = document.createElement('div');
+  identificacao.className = 'message-heading';
+  identificacao.textContent = tipo === 'assistant' ? 'King' : 'Tu';
+
+  const texto = document.createElement('div');
+  texto.className = 'message-content';
+  corpo.append(identificacao, texto);
+  mensagem.append(avatar, corpo);
+  return { mensagem, corpo, texto };
+}
+
+function acrescentarTextoSimples(elemento, texto) {
+  if (!texto) {
+    return;
+  }
+
+  texto.split(/(`[^`\n]+`)/g).forEach((parte) => {
+    if (parte.startsWith('`') && parte.endsWith('`')) {
+      const codigo = document.createElement('code');
+      codigo.textContent = parte.slice(1, -1);
+      elemento.append(codigo);
+    } else {
+      elemento.append(document.createTextNode(parte));
+    }
+  });
+}
+
+function acrescentarTextoFormatado(elemento, texto) {
+  const partesCodigo = /```([^\n`]*)\n([\s\S]*?)```/g;
+  let inicio = 0;
+  let correspondencia;
+
+  while ((correspondencia = partesCodigo.exec(texto)) !== null) {
+    acrescentarTextoSimples(elemento, texto.slice(inicio, correspondencia.index));
+    const bloco = document.createElement('pre');
+    const codigo = document.createElement('code');
+    codigo.textContent = correspondencia[2].replace(/\n$/, '');
+    bloco.append(codigo);
+    elemento.append(bloco);
+    inicio = partesCodigo.lastIndex;
+  }
+
+  acrescentarTextoSimples(elemento, texto.slice(inicio));
+}
+
+function acrescentarAcoes(corpo, resposta) {
+  const acoes = document.createElement('div');
+  acoes.className = 'message-actions';
+  acoes.innerHTML = `
+    <button class="message-action" type="button" data-action="copy" aria-label="Copiar resposta">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></svg><span>Copiar</span>
+    </button>
+    <button class="message-action" type="button" data-action="repeat" aria-label="Repetir resposta, demonstração visual">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.6 9A7 7 0 0 1 17 6l3 6M4 12l3 6a7 7 0 0 0 11.4-3"/></svg><span>Repetir</span>
+    </button>
+    <button class="message-action" type="button" data-action="rate" aria-label="Avaliar resposta" aria-pressed="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10v11H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2zm0 0 5-8a3 3 0 0 1 2 3l-1 5h6a2 2 0 0 1 2 2l-1 7a2 2 0 0 1-2 2H7"/></svg><span>Avaliar</span>
+    </button>`;
+  acoes.dataset.answer = resposta;
+  corpo.append(acoes);
+}
+
+function mostrarConversa() {
+  document.getElementById('welcomeScreen')?.classList.add('hidden');
+  document.getElementById('conversation')?.classList.remove('hidden');
+  document.getElementById('chatView')?.classList.remove('hidden');
+  document.getElementById('toolWorkspace')?.classList.add('hidden');
+}
+
+function ajustarCampo(campoPergunta) {
+  campoPergunta.style.height = 'auto';
+  campoPergunta.style.height = `${Math.min(campoPergunta.scrollHeight, 180)}px`;
+}
+
+async function copiarTexto(texto, botao) {
+  try {
+    await navigator.clipboard.writeText(texto);
+    botao.querySelector('span').textContent = 'Copiado';
+  } catch {
+    botao.querySelector('span').textContent = 'Não foi possível copiar';
+  }
+}
+
 async function responderIA() {
   const campoPergunta = document.getElementById('perguntaIA');
   const resposta = document.getElementById('respostaIA');
+  const botao = document.getElementById('btn-IA');
 
   if (!campoPergunta || !resposta) {
+    return;
+  }
+  if (botao?.disabled) {
     return;
   }
 
   const pergunta = campoPergunta.value.trim();
 
   if (!pergunta) {
-    resposta.innerHTML = '<strong>King IA:</strong> Escreva uma pergunta para receber ajuda nos estudos.';
+    campoPergunta.focus();
     return;
   }
 
-  const botao = document.getElementById('btn-IA');
+  const versaoAtual = versaoConversa;
   if (botao) {
     botao.disabled = true;
   }
-  mostrarIndicadorEspera(resposta);
+  mostrarConversa();
+  const mensagensUI = document.getElementById('respostaIA');
+  const mensagemUtilizador = criarMensagem('user');
+  mensagemUtilizador.texto.textContent = pergunta;
+  mensagensUI.append(mensagemUtilizador.mensagem);
+  const mensagemKing = criarMensagem('assistant');
+  mensagensUI.append(mensagemKing.mensagem);
+  mostrarIndicadorEspera(mensagemKing.texto);
+  const chatStage = document.getElementById('chatStage');
+  chatStage?.scrollTo({ top: chatStage.scrollHeight, behavior: 'smooth' });
+  campoPergunta.value = '';
+  ajustarCampo(campoPergunta);
 
   try {
     const mensagens = [
@@ -146,6 +258,9 @@ async function responderIA() {
     } catch {
       throw new Error('O servidor não devolveu uma resposta válida. Inicie a aplicação com npm start.');
     }
+    if (versaoAtual !== versaoConversa) {
+      return;
+    }
     if (!requisicao.ok) {
       throw new Error(dados.error || 'Não foi possível obter uma resposta.');
     }
@@ -153,19 +268,27 @@ async function responderIA() {
       throw new Error('O servidor devolveu uma resposta vazia.');
     }
 
-    resposta.textContent = `King IA: ${dados.answer}`;
+    acrescentarTextoFormatado(mensagemKing.texto, dados.answer);
+    acrescentarAcoes(mensagemKing.corpo, dados.answer);
     historicoIA = [
       ...mensagens,
       { role: 'assistant', content: dados.answer }
     ].slice(-20);
   } catch (erro) {
+    if (versaoAtual !== versaoConversa) {
+      return;
+    }
     const mensagem = erro instanceof TypeError
       ? 'Não foi possível contactar a API King. Confirme que o servidor está em execução e tente novamente.'
       : erro.message || 'Ocorreu um erro ao enviar a pergunta.';
-    resposta.textContent = `King IA: ${mensagem}`;
+    mensagemKing.mensagem.classList.add('message-error');
+    mensagemKing.texto.textContent = mensagem;
   } finally {
-    if (botao) {
+    if (botao && versaoAtual === versaoConversa) {
       botao.disabled = false;
+    }
+    if (versaoAtual === versaoConversa) {
+      chatStage?.scrollTo({ top: chatStage.scrollHeight, behavior: 'smooth' });
     }
   }
 }
@@ -192,11 +315,123 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const campoPergunta = document.getElementById('perguntaIA');
   if (campoPergunta) {
+    campoPergunta.addEventListener('input', () => ajustarCampo(campoPergunta));
     campoPergunta.addEventListener('keydown', (event) => {
-      if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+      if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
         responderIA();
       }
     });
   }
+
+  document.getElementById('composerForm')?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    responderIA();
+  });
+
+  const appShell = document.getElementById('appShell');
+  const menuToggle = document.getElementById('menuToggle');
+  const sidebar = document.getElementById('appSidebar');
+  const fecharMenu = () => {
+    appShell?.classList.remove('sidebar-open');
+    sidebar?.setAttribute('aria-hidden', 'true');
+    if (sidebar) {
+      sidebar.inert = true;
+    }
+    menuToggle?.setAttribute('aria-expanded', 'false');
+    menuToggle?.setAttribute('aria-label', 'Abrir menu');
+  };
+  const abrirMenu = () => {
+    appShell?.classList.add('sidebar-open');
+    sidebar?.setAttribute('aria-hidden', 'false');
+    if (sidebar) {
+      sidebar.inert = false;
+    }
+    menuToggle?.setAttribute('aria-expanded', 'true');
+    menuToggle?.setAttribute('aria-label', 'Fechar menu');
+  };
+
+  menuToggle?.addEventListener('click', () => {
+    if (appShell?.classList.contains('sidebar-open')) {
+      fecharMenu();
+    } else {
+      abrirMenu();
+    }
+  });
+  document.getElementById('sidebarClose')?.addEventListener('click', fecharMenu);
+  document.getElementById('sidebarBackdrop')?.addEventListener('click', fecharMenu);
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      fecharMenu();
+    }
+  });
+
+  const novaConversa = () => {
+    versaoConversa += 1;
+    historicoIA = [];
+    const botaoEnvio = document.getElementById('btn-IA');
+    if (botaoEnvio) {
+      botaoEnvio.disabled = false;
+    }
+    document.getElementById('respostaIA')?.replaceChildren();
+    document.getElementById('conversation')?.classList.add('hidden');
+    document.getElementById('welcomeScreen')?.classList.remove('hidden');
+    document.getElementById('toolWorkspace')?.classList.add('hidden');
+    document.getElementById('chatView')?.classList.remove('hidden');
+    if (campoPergunta) {
+      campoPergunta.value = '';
+      ajustarCampo(campoPergunta);
+      campoPergunta.focus();
+    }
+    fecharMenu();
+  };
+  document.getElementById('newChatButton')?.addEventListener('click', novaConversa);
+  document.getElementById('sidebarNewChat')?.addEventListener('click', novaConversa);
+
+  document.querySelectorAll('[data-prompt]').forEach((botao) => {
+    botao.addEventListener('click', () => {
+      if (campoPergunta) {
+        campoPergunta.value = botao.dataset.prompt || '';
+        ajustarCampo(campoPergunta);
+        campoPergunta.focus();
+        fecharMenu();
+      }
+    });
+  });
+
+  document.getElementById('capabilitiesButton')?.addEventListener('click', () => {
+    showCapacidades();
+    fecharMenu();
+  });
+  document.getElementById('backToChat')?.addEventListener('click', () => {
+    document.getElementById('toolWorkspace')?.classList.add('hidden');
+    document.getElementById('chatView')?.classList.remove('hidden');
+  });
+
+  const alternarTema = document.getElementById('themeToggle');
+  alternarTema?.addEventListener('click', () => {
+    const escuro = document.documentElement.dataset.theme !== 'dark';
+    document.documentElement.dataset.theme = escuro ? 'dark' : 'light';
+    alternarTema.setAttribute('aria-pressed', String(escuro));
+    alternarTema.querySelector('span').textContent = escuro ? 'Modo claro' : 'Modo escuro';
+  });
+
+  document.getElementById('respostaIA')?.addEventListener('click', (event) => {
+    const botao = event.target.closest('[data-action]');
+    if (!botao) {
+      return;
+    }
+    const acoes = botao.closest('.message-actions');
+    if (botao.dataset.action === 'copy') {
+      copiarTexto(acoes.dataset.answer, botao);
+    } else if (botao.dataset.action === 'repeat') {
+      botao.querySelector('span').textContent = 'Sem nova chamada';
+      botao.setAttribute('aria-label', 'Ação demonstrativa; não foi feita nova chamada à IA');
+    } else if (botao.dataset.action === 'rate') {
+      const avaliado = botao.getAttribute('aria-pressed') !== 'true';
+      botao.setAttribute('aria-pressed', String(avaliado));
+      botao.querySelector('span').textContent = avaliado ? 'Obrigado' : 'Avaliar';
+    }
+  });
 
 });

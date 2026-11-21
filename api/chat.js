@@ -84,7 +84,7 @@ module.exports = async function handler(req, res) {
     });
   }
 
-  let data = req.body;
+ let data = req.body;
 
   if (typeof data === 'string') {
     if (Buffer.byteLength(data, 'utf8') > MAX_REQUEST_BYTES) {

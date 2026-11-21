@@ -1,120 +1,199 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-PT">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>King Chat - Seu Assistente Pessoal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#f7f8fa" />
+    <title>King — O teu espaço para pensar</title>
     <link rel="stylesheet" href="disgner/king.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
   </head>
   <body>
-    <div class="container">
-      <header class="header">
-        <h1 class="chat-name"><i class="fas fa-robot"></i> <span id="chatName">King</span></h1>
-        <p class="subtitle">O seu programa para te ajudar a crescer, aprender, melhorar na vida acadêmica.</p>
-      </header>
-
-      <main class="main-content">
-        <div class="menu-section" id="mainMenu">
-          <h2>Menu Principal</h2>
-          <div class="button-grid">
-            <button onclick="showCapacidades()" class="btn primary">
-              <i class="fas fa-brain"></i> Ver minhas capacidades
-            </button>
-            <button onclick="alterarNome()" class="btn secondary">
-              <i class="fas fa-edit"></i> Alterar nome do chat
-            </button>
-          </div>
-        </div>
-
-        <div class="menu-section hidden" id="capacidadesMenu">
-          <h2>Minhas Capacidades</h2>
-          <div class="button-grid">
-            <button onclick="showHorarios()" class="btn">
-              <i class="fas fa-clock"></i> Criar horários de estudos
-            </button>
-            <button onclick="showMetodos()" class="btn">
-              <i class="fas fa-rocket"></i> Métodos pra aprender rápido
-            </button>
-            <button onclick="showFinancas()" class="btn">
-              <i class="fas fa-wallet"></i> Educação financeira
-            </button>
-            <button onclick="showAutoconfianca()" class="btn">
-              <i class="fas fa-heart"></i> Autoconfiança e autoestima
-            </button>
-          </div>
-          <button onclick="voltarMenu()" class="btn back-btn">
-            <i class="fas fa-arrow-left"></i> Voltar
-          </button>
-        </div>
-        <div class="menu-section hidden" id="horariosMenu">
-          <h2>Qual período você está livre para estudar?</h2>
-          <div class="input-group">
-            <input type="text" id="periodoInput" placeholder="Digite: manhã, tarde ou noite" />
-            <button onclick="gerarHorario()" class="btn primary">
-              <i class="fas fa-search"></i> Gerar horário
-            </button>
-          </div>
-          <div id="horarioResultado" class="result-box"></div>
-          <button onclick="voltarCapacidades()" class="btn back-btn">
-            <i class="fas fa-arrow-left"></i> Voltar
+    <div class="app-shell" id="appShell">
+      <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
+      <aside class="sidebar" id="appSidebar" aria-label="Menu lateral" aria-hidden="true" inert>
+        <div class="sidebar-top">
+          <a class="brand sidebar-brand" href="#" aria-label="King, início">
+            <span class="brand-mark" aria-hidden="true">K</span>
+            <span>KING</span>
+          </a>
+          <button class="icon-button sidebar-close" id="sidebarClose" type="button" aria-label="Fechar menu">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg>
           </button>
         </div>
 
-        <div class="menu-section hidden" id="metodosMenu">
-          <h2>Métodos para aprender em um flash</h2>
-          <div class="button-grid">
-            <button onclick="mostrarMetodo(1)" class="btn">Pomodoro</button>
-            <button onclick="mostrarMetodo(2)" class="btn">Feynman</button>
-            <button onclick="mostrarMetodo(3)" class="btn">Active Recall</button>
-            <button onclick="mostrarMetodo(4)" class="btn">Spaced Repetition</button>
-            <button onclick="mostrarMetodo(5)" class="btn">Interleaving</button>
+        <button class="sidebar-new-chat" id="sidebarNewChat" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+          <span>Nova conversa</span>
+        </button>
+
+        <label class="conversation-search">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8" /><path d="m16 16 4 4" /></svg>
+          <input type="search" placeholder="Pesquisar conversas" aria-label="Pesquisar conversas" />
+        </label>
+
+        <div class="sidebar-section-label">Recentes</div>
+        <nav class="recent-list" aria-label="Conversas recentes">
+          <button type="button" class="recent-item" data-prompt="Ajuda-me a organizar as minhas ideias para esta semana.">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5zM4 5.5v15" /></svg>
+            <span>Organizar a semana</span>
+          </button>
+          <button type="button" class="recent-item" data-prompt="Explica-me os fundamentos de programação de forma simples.">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 8-4 4 4 4m8-8 4 4-4 4m-3-11-2 14" /></svg>
+            <span>Fundamentos de programação</span>
+          </button>
+          <button type="button" class="recent-item" data-prompt="Ajuda-me a criar um plano de estudo realista.">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="16" rx="2" /><path d="M8 3v4m8-4v4M4 10h16m-11 4h2m3 0h2m-7 3h2" /></svg>
+            <span>Plano de estudo</span>
+          </button>
+        </nav>
+
+        <div class="sidebar-bottom">
+          <button class="sidebar-link" id="capabilitiesButton" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 14 9l6 3-6 2-2 7-2-7-6-2 6-3z" /></svg>
+            <span>Capacidades do King</span>
+          </button>
+          <button class="sidebar-link" id="themeToggle" type="button" aria-pressed="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 15.5A8.5 8.5 0 0 1 8.5 3.5 8.5 8.5 0 1 0 20.5 15.5Z" /></svg>
+            <span>Modo escuro</span>
+          </button>
+          <div class="user-card">
+            <span class="user-avatar" aria-hidden="true">K</span>
+            <span class="user-details"><strong>King</strong><small>O teu assistente</small></span>
+            <span class="user-status" aria-label="Disponível"></span>
           </div>
-          <div id="metodoResultado" class="result-box"></div>
-          <button onclick="voltarCapacidades()" class="btn back-btn">
-            <i class="fas fa-arrow-left"></i> Voltar
-          </button>
         </div>
+      </aside>
 
-        <div class="menu-section hidden" id="financasMenu">
-          <h2>Educação Financeira</h2>
-          <div id="financasConteudo" class="result-box"></div>
-          <button onclick="voltarCapacidades()" class="btn back-btn">
-            <i class="fas fa-arrow-left"></i> Voltar
-          </button>
-        </div>
-
-        <div class="menu-section hidden" id="autoconfiancaMenu">
-          <h2>Autoconfiança e Autodisciplina</h2>
-          <div id="autoconfiancaConteudo" class="result-box"></div>
-          <button onclick="voltarCapacidades()" class="btn back-btn">
-            <i class="fas fa-arrow-left"></i> Voltar
-          </button>
-        </div>
-
-        <section class="ai-panel" aria-label="Assistente de estudos da IA">
-          <h2>King IA de estudos</h2>
-      
-          <label for="perguntaIA">Pergunte ao King IA sobre o que você está estudando</label>
-          <textarea id="perguntaIA" rows="4" maxlength="4000" placeholder="Ex.: Como posso estudar matemática em 30 minutos sem me perder?"></textarea>
-          <div class="ai-actions">
-            <button onclick="responderIA()" class="btn primary " id="btn-IA">
-         
-              <i class="fas fa-paper-plane"></i> Pedir ajuda ao King
+      <main class="main-area">
+        <header class="topbar">
+          <div class="topbar-start">
+            <button class="icon-button" id="menuToggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="appSidebar">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
             </button>
+            <a class="brand topbar-brand" href="#" aria-label="King, início">
+              <span class="brand-mark" aria-hidden="true">K</span>
+              <span id="chatName">KING</span>
+            </a>
           </div>
-          <div id="respostaIA" class="result-box" aria-live="polite"></div>
+          <button class="new-chat-button" id="newChatButton" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+            <span>Nova conversa</span>
+          </button>
+        </header>
+
+        <div class="chat-view" id="chatView">
+          <section class="chat-stage" id="chatStage" aria-label="Conversa com o King">
+            <section class="welcome-screen" id="welcomeScreen">
+              <div class="welcome-content">
+                <span class="welcome-mark" aria-hidden="true"><span>K</span></span>
+                <p class="eyebrow">O TEU ESPAÇO PARA PENSAR</p>
+                <h1>Em que estás a pensar?</h1>
+                <p class="welcome-description">Sou o King. Estou aqui para ajudar-te a aprender, pensar, criar e evoluir.</p>
+                <div class="suggestion-grid" aria-label="Sugestões para começar">
+                  <button class="suggestion-card" type="button" data-prompt="Quero aprender um conceito novo. Podes explicar-me de forma simples e ajudar-me a praticar?">
+                    <span class="suggestion-icon learning-icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5zM4 5.5v15M8 7h8m-8 4h8" /></svg>
+                    </span>
+                    <span class="suggestion-copy"><strong>Aprendizagem</strong><span>Aprende novos conceitos e desenvolve as tuas habilidades.</span></span>
+                    <svg class="suggestion-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
+                  </button>
+                  <button class="suggestion-card" type="button" data-prompt="Estou a trabalhar num projeto de programação. Ajuda-me a explorar uma solução e explica o raciocínio.">
+                    <span class="suggestion-icon coding-icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24"><path d="m8 8-4 4 4 4m8-8 4 4-4 4m-3-11-2 14" /></svg>
+                    </span>
+                    <span class="suggestion-copy"><strong>Programação</strong><span>Explora código, resolve problemas e constrói projetos.</span></span>
+                    <svg class="suggestion-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
+                  </button>
+                  <button class="suggestion-card" type="button" data-prompt="Ajuda-me a organizar os meus objetivos e a criar pequenos hábitos para progredir.">
+                    <span class="suggestion-icon growth-icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24"><path d="M4 19V5m0 14h16M7 15l4-4 3 2 6-7m-5 0h5v5" /></svg>
+                    </span>
+                    <span class="suggestion-copy"><strong>Crescimento</strong><span>Organiza objetivos, desenvolve hábitos e melhora as tuas ideias.</span></span>
+                    <svg class="suggestion-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
+                  </button>
+                </div>
+              </div>
+            </section>
+            <section class="conversation hidden" id="conversation" aria-label="Mensagens">
+              <div class="conversation-messages" id="respostaIA" aria-live="polite"></div>
+            </section>
+          </section>
+
+          <div class="composer-area">
+            <form class="composer" id="composerForm">
+              <button class="composer-tool" type="button" aria-label="Adicionar anexo">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+              </button>
+              <textarea id="perguntaIA" rows="1" maxlength="4000" placeholder="Perguntar ao King" aria-label="Perguntar ao King"></textarea>
+              <button class="composer-tool mic-button" type="button" aria-label="Microfone">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3" /><path d="M5 11a7 7 0 0 0 14 0m-7 7v3m-4 0h8" /></svg>
+              </button>
+              <button class="send-button" id="btn-IA" type="submit" aria-label="Enviar mensagem">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m-6 6 6-6 6 6" /></svg>
+              </button>
+            </form>
+            <p class="composer-note">O King pode cometer erros. Confirma a informação importante.</p>
+          </div>
+        </div>
+
+        <section class="tool-workspace hidden" id="toolWorkspace" aria-label="Capacidades do King">
+          <div class="tool-workspace-heading">
+            <button class="btn back-btn" id="backToChat" type="button">Voltar à conversa</button>
+            <span class="eyebrow">FERRAMENTAS DE ESTUDO</span>
+            <h1>Capacidades do King</h1>
+            <p>Recursos para te ajudar a aprender e crescer.</p>
+          </div>
+          <div class="menu-section" id="mainMenu">
+            <h2>Menu principal</h2>
+            <div class="button-grid">
+              <button onclick="showCapacidades()" class="btn primary"><span aria-hidden="true">✦</span> Ver capacidades</button>
+              <button onclick="alterarNome()" class="btn secondary"><span aria-hidden="true">✎</span> Alterar nome do chat</button>
+            </div>
+          </div>
+          <div class="menu-section hidden" id="capacidadesMenu">
+            <h2>As minhas capacidades</h2>
+            <div class="button-grid">
+              <button onclick="showHorarios()" class="btn"><span aria-hidden="true">◷</span> Criar horários de estudo</button>
+              <button onclick="showMetodos()" class="btn"><span aria-hidden="true">↗</span> Métodos para aprender</button>
+              <button onclick="showFinancas()" class="btn"><span aria-hidden="true">◇</span> Educação financeira</button>
+              <button onclick="showAutoconfianca()" class="btn"><span aria-hidden="true">♡</span> Autoconfiança e autoestima</button>
+            </div>
+            <button onclick="voltarMenu()" class="btn back-btn">Voltar</button>
+          </div>
+          <div class="menu-section hidden" id="horariosMenu">
+            <h2>Em que período estás livre para estudar?</h2>
+            <div class="input-group">
+              <input type="text" id="periodoInput" placeholder="Escreve: manhã, tarde ou noite" />
+              <button onclick="gerarHorario()" class="btn primary">Gerar horário</button>
+            </div>
+            <div id="horarioResultado" class="result-box"></div>
+            <button onclick="voltarCapacidades()" class="btn back-btn">Voltar</button>
+          </div>
+          <div class="menu-section hidden" id="metodosMenu">
+            <h2>Métodos para aprender</h2>
+            <div class="button-grid">
+              <button onclick="mostrarMetodo(1)" class="btn">Pomodoro</button>
+              <button onclick="mostrarMetodo(2)" class="btn">Feynman</button>
+              <button onclick="mostrarMetodo(3)" class="btn">Active Recall</button>
+              <button onclick="mostrarMetodo(4)" class="btn">Spaced Repetition</button>
+              <button onclick="mostrarMetodo(5)" class="btn">Interleaving</button>
+            </div>
+            <div id="metodoResultado" class="result-box"></div>
+            <button onclick="voltarCapacidades()" class="btn back-btn">Voltar</button>
+          </div>
+          <div class="menu-section hidden" id="financasMenu">
+            <h2>Educação financeira</h2>
+            <div id="financasConteudo" class="result-box"></div>
+            <button onclick="voltarCapacidades()" class="btn back-btn">Voltar</button>
+          </div>
+          <div class="menu-section hidden" id="autoconfiancaMenu">
+            <h2>Autoconfiança e autodisciplina</h2>
+            <div id="autoconfiancaConteudo" class="result-box"></div>
+            <button onclick="voltarCapacidades()" class="btn back-btn">Voltar</button>
+          </div>
         </section>
       </main>
-
-      <footer class="rodape">
-        <h2>Este programa foi criado por:</h2>
-        <p>Dev. José Frederico<sup>23</sup> — Backend e Frontend</p>
-        <p>Estudante do SMARTBITS</p>
-        <p>Contactos: 957 375 801 / 976 156 646 (só para auxiliar em projetos).</p>
-      </footer>
     </div>
-
     <script src="backend/king.js"></script>
   </body>
-  </html>
+</html>

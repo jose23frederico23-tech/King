@@ -22,7 +22,8 @@ const INSTRUCAO_KING =
   'Usa o histórico da conversa: constrói cada resposta com base nas perguntas anteriores. ' +
   'Não fales como um professor distante nem como uma pessoa velha a dar sermões. ' +
   'Se a pergunta não tiver relação com aprender, conhecer algo ou receber conselhos, ' +
-  'não a respondas: diz numa mensagem curta que só podes falar sobre esses temas e orienta a conversa de volta a eles.';
+  'não a respondas: diz numa mensagem curta que só podes falar sobre esses temas e orienta a conversa de volta a eles. ' +
+  'Mantém as respostas curtas e diretas, sem rodeios, divagações ou detalhes desnecessários.';
 
 function loadEnvFile() {
   const envPath = path.join(ROOT, '.env');
